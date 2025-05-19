@@ -1,11 +1,16 @@
 from aiogram import Dispatcher, types
-from aiogram.filters import Command, ContentTypeFilter
+from aiogram import F
+from aiogram.filters import Command
+from aiogram.types import ContentType
 from aiogram.fsm.context import FSMContext
 from states.forms import PaymentForm
 import aiohttp
-from decouple import config
+from dotenv import load_dotenv
+import os
 
-API_URL = config('API_URL', default='http://127.0.0.1:8000/api/')
+load_dotenv()
+API_URL = os.getenv('API_URL')
+
 
 def register_payment_handlers(dp: Dispatcher):
     @dp.message(Command('payment'))
@@ -13,7 +18,7 @@ def register_payment_handlers(dp: Dispatcher):
         await state.set_state(PaymentForm.CHECK)
         await message.reply("To‘lov chekini rasm sifatida yuboring:")
 
-    @dp.message(ContentTypeFilter(content_types=types.ContentType.PHOTO), PaymentForm.CHECK)
+    @dp.message(F.content_type == ContentType.PHOTO, PaymentForm.CHECK)
     async def payment_check(message: types.Message, state: FSMContext):
         photo = message.photo[-1].file_id
         payload = {

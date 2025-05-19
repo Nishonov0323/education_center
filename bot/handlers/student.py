@@ -3,9 +3,14 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from states.forms import StudentForm
 import aiohttp
-from decouple import config
+from dotenv import load_dotenv
+import os
 
-API_URL = config('API_URL', default='http://127.0.0.1:8000/api/')
+# .env faylini yuklash
+load_dotenv()
+
+API_URL = os.getenv('API_URL')
+
 
 def register_student_handlers(dp: Dispatcher):
     @dp.message(Command('student'))
